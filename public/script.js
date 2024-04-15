@@ -31,32 +31,28 @@ console.log("script.js loaded");
 //     }
 //   } , 2000);
 // }
-console.log("script.js loaded");
-
-// Listen for updateRooms event to update rooms array
-socket.on('updateRooms', (updatedRooms) => {
-    console.log("Received updated rooms in script.js:", updatedRooms);
-    rooms = updatedRooms;
-    changebutton();  // Call changebutton after updating rooms
+socket.on('getrooms', (room) => {
+  rooms = room;
+  console.log("rooms check event executed . rooms=", rooms); // This will be executed when the server emits the 'roomcheck' event
 });
 
-function changebutton(){
-    setTimeout(() => {
-        const roomValue = document.getElementById('enterroom').value;
-        const submitButton = document.getElementById("submit");
-        console.log("executing changebutton function");
-        console.log("rooms array in changebutton:", rooms);
-        console.log("roomValue in changebutton:", roomValue);
-
-        if(rooms.includes(roomValue)) {
-            submitButton.innerHTML = "Enter Room";
-            submitButton.onclick = enterroom;
-        } else {
-            document.getElementById('enterroom').placeholder = "wrong room id";
-            submitButton.innerHTML = "wrong room id";
-            // submitButton.onclick = null;
-        }
-    }, 2000);
+function changebutton() {
+  setTimeout(() => {
+    const roomValue = document.getElementById('enterroom').value;
+    const submitButton = document.getElementById("submit");
+    console.log("executing changebutton function");
+    console.log("rooms array in changebutton:", rooms);
+    console.log("roomValue in changebutton:", roomValue);
+    if (rooms.includes(roomValue)) {
+      console.log("correct room");
+      submitButton.innerHTML = "Enter Room";
+      submitButton.onclick = enterroom;
+    } else {
+      document.getElementById('enterroom').placeholder = "wrong room id";
+      submitButton.innerHTML = "wrong room id";
+      // submitButton.onclick = null;
+    }
+  }, 2000);
 }
 
 async function getVideos(q) {
@@ -88,26 +84,25 @@ function processVideos() {
     console.log(title[i] = videos[i].title);
   }
   const videoList = document.getElementById('videoList'); // Assuming you have a <ul> element with id 'videoList'
-  
+
   videos.forEach((video, index) => {
     const btn = document.createElement('button');
     btn.textContent = video.title;
     btn.addEventListener('click', () => playVideo(video));
-    
+
     const li = document.createElement('li');
     li.appendChild(btn);
-    
+
     videoList.appendChild(li);
-    
+
     id[index] = video.videoId;
     title[index] = video.title;
   });
 }
-function playVideo(vid) 
-{
+function playVideo(vid) {
   const video = document.querySelector('iframe');
   h1 = document.querySelector('h1');
   h1.textContent = vid.title;
-  id=vid.videoId;
+  id = vid.videoId;
   video.src = `https://www.youtube.com/embed/${id}?si=JkMawwWwe-8avw1C&autoplay=1`;
 }
