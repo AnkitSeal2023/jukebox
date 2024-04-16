@@ -11,26 +11,6 @@ async function query() {
   processVideos();  // Process the videos after getVideos is completed
 }
 console.log("script.js loaded");
-// function changebutton(){
-//   setTimeout(()=>
-//   {
-//     const roomValue = document.getElementById('enterroom').value;
-//     const submitButton = document.getElementById("submit");
-//     console.log("executing changebutton function");
-//     console.log(typeof roomValue);
-//     console.log(rooms);
-//     console.log(typeof rooms[0]);
-//     // Check against the socket ID directly
-//     if(rooms.includes(roomValue)) {
-//       submitButton.innerHTML = "Enter Room";
-//       submitButton.onclick = enterroom;  // Assign function reference
-//     } else {
-//       document.getElementById('enterroom').placeholder = "wrong room id";
-//       submitButton.innerHTML = "wrong room id";
-//       submitButton.onclick = null;  // Remove onclick
-//     }
-//   } , 2000);
-// }
 socket.on('getrooms', (room) => {
   rooms = room;
   console.log("rooms check event executed . rooms=", rooms); // This will be executed when the server emits the 'roomcheck' event
