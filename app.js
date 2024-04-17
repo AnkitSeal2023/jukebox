@@ -10,11 +10,11 @@ const io = new Server(server);
 const publicPath = path.join(__dirname, '.', 'public');  // Update this line
 var rooms=[];
 let userRoom;
-let roomIds
+let roomIds;
 app.use(express.static(publicPath));  // Serve static files
     
 app.get('/home', (req, res) => { 
-    res.sendFile(path.join(publicPath, 'index.html'));
+    res.sendFile(path.join(publicPath, 'home.html'));
 });
 
 io.on('connection', (socket) => {
@@ -25,6 +25,9 @@ io.on('connection', (socket) => {
         rooms.push(userRoom);
         console.log(`User ${name}:connected to the server`);
         console.log("rooms:", rooms);
+    });
+    socket.on("joinRoom",(roomValue)=>{
+        socket.join("roomValue");
     });
     socket.on('loadVideo', (videoId) => {
         // Broadcast the video ID to all other clients

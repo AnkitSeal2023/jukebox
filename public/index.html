@@ -1,27 +1,33 @@
 <!DOCTYPE html>
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>YouTube API Example</title>
+    <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
-    <input type="text" id='name' placeholder="Enter your name">
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-    <script>
-        const socket = io();
-        let roomnames=[];
-        function submit() {
-            const name = document.getElementById('name').value;
-            socket.emit('submit', name);
-            window.location.href = "home.html";
-        }
-        </script>
-    <script src="./script.js"></script>
-    <!-- <a href="index.html">Submit</a> -->
-    <button id="submit" onclick="submit()">Make a new room</button>
-    <input type="text" id='enterroom' placeholder="Enter room id" oninput="changebutton()">
+    <script type="module">
+        import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+        var socket = io();
+    </script>
+    <script src="script.js"></script>
+    <h1>YouTube API Example</h1>
+    <input type="range" id="timeline" min="0" max="100" value="0" >
+    <iframe width="500vw" height="500vh" src="https://www.youtube.com/embed/a3ICNMQW7Ok?si=JkMawwWwe-8avw1C&amp;controls=0;autoplay=1"
+    title="YouTube video player" frameborder="5" onload="getSeconds()"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
+    </iframe>
+    <input type="text" id="search" placeholder="Search for videos">
+    <button id="search-button" onclick="query()">Search</button>
+    <!-- <script>
+        document.getElementById('search-button').addEventListener('click', query);
+    </script> -->
+    <ul id="videoList"></ul>
+
 </body>
 
 </html>
