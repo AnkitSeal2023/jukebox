@@ -1,6 +1,6 @@
 console.log("script.js loaded");
 let rooms = [];
-let search, mainid, q, roomValue, requestOptions, contentInfo, timeline, time, tag, vidID;
+let search, mainid, q, roomValue, requestOptions, contentInfo, timeline, time, tag, vidID, timerInterval;
 vidID="M7lc1UVf-VE";
 var player;
 let id = [];
@@ -57,7 +57,7 @@ async function getVideos(q) {
   }
 }
 
-function processVideos() {
+function processVideos() {  //filter the required data from the received json object for future use 
   const videos = search.items.map(item => ({
     videoId: item.id.videoId,
     title: item.snippet.title
@@ -85,37 +85,23 @@ function processVideos() {
   });
 }
 
-function playVideo(vid) {
-  // const video = document.querySelector('iframe');
+function playVideo(vid) {  //executed when one of the button in the list of buttons is clicked
   h1 = document.querySelector('h1');
   h1.textContent = vid.title;
   id2 = vid.videoId;
-  getSeconds(id2);
-  // video.src = `https://www.youtube.com/embed/${id2}?si=JkMawwWwe-8avw1C&autoplay=1`;
+  getSeconds(id2); //get no of seconds for the new video
   var tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
+  tag.src = "https://www.youtube.com/iframe_api"; //load the youtubeiframe api
   var firstScriptTag = document.getElementsByTagName('script')[0];
   firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-  // 3. This function creates an <iframe> (and YouTube player)
-  //    after the API code downloads.
-  console.log("id2=", id2);
-  // onYouTubeIframeAPIReady(id2);
-  loadYouTubePlayerAPI(id2);
+  player.videoId=id2; //assign the clicked button's video id to player
+  player.loadVideoById(id2); //load the video of the clicked buttons' video id
 }
 
-async function onload() {
-  console.log("onload function executed");
-  socket.emit('submit', prompt("Enter your name"));
-  socket.on('videoLoaded', (videoId) => {
-    const video = document.querySelector('iframe');
-  });
-}
-
-async function getSeconds(id2) {
+async function getSeconds(id2) { //2 functions to call getsec asynchronously with await attribute
   await getSec(id2);
 }
-async function getSec(id2) {
+async function getSec(id2) { //get the no. of seconds for new video
   mainid = id2;
   requestOptions = {
     method: "GET",
@@ -129,8 +115,8 @@ async function getSec(id2) {
     else {
       contentInfo = await response.json();  // store the video details for that id
       seconds = iso8601DurationToSec(contentInfo.items[0].contentDetails.duration);
-      document.getElementById("timeline").max = seconds;
-      console.log("time:", seconds);
+      timeline=document.getElementById("timeline");
+      timeline.max = seconds;
     }
   }
   catch (error) {
@@ -178,7 +164,6 @@ function seekToTime(time) {
   console.log("seekToTime function called with seconds:", time);
   console.log(player);
   if (player && typeof player.seekTo === 'function') {
-    console.log("Player exists and has seekTo method");
     player.seekTo(time, true); // Seek to the specified time in seconds
   } else {
     console.log("Player is not ready or seekTo method is not available");
@@ -194,22 +179,39 @@ function onYouTubeIframeAPIReady() {
     playerVars: {
       'playsinline': 1,
       'autoplay': 1,
-      'controls': 0,
+      'controls': 1,
     },
     events: {
       'onReady': onPlayerReady,
+      'onStateChange': onPlayerStateChange
     }
   });
-  console.log("player=",player);
-  console.log("YT=",YT);
-  console.log("video ID=", id2);
-  console.log("player inside onyoutubeapiframe=", id2);
 }
 // Function called when the YouTube Player is ready
 function onPlayerReady(event) {
   timeline = document.getElementById("timeline").value;
-  console.log("Player is ready");
-  console.log("player=",player);
+}
+function onPlayerStateChange(event) 
+{
+  if(YT.PlayerState.PLAYING==2)
+  {
+    console.log("timer cleared");
+    clearInterval(timerInterval);
+  }
+  else if (YT.PlayerState.PLAYING)
+  {
+    console.log("Player is playing");
+    trackProgress();  
+  }
+}
+function trackProgress()
+{
+  timerInterval=setInterval(increaseTimeline(),1000);
+}
+function increaseTimeline()
+{
+  timeline.value=timeline.value + 1
+  console.log("timeline.value=",timeline.value);
 }
 
 // Function to handle seek functionality
