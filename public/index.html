@@ -9,23 +9,18 @@
 </head>
 
 <body>
+    <script src="script.js"></script>
+    <script src="https://www.youtube.com/iframe_api" onload="alertFunc()"></script>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         var socket = io();
     </script>
-    <script src="script.js"></script>
+    
     <h1>YouTube API Example</h1>
-    <input type="range" id="timeline" min="0" max="100" value="0" >
-    <iframe width="500vw" height="500vh" src="https://www.youtube.com/embed/a3ICNMQW7Ok?si=JkMawwWwe-8avw1C&amp;controls=0;autoplay=1"
-    title="YouTube video player" frameborder="5" onload="getSeconds()"
-    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-    referrerpolicy="strict-origin-when-cross-origin" allowfullscreen>
-    </iframe>
+    <div id="youtubePlayer"></div>
+    <input type="range" id="timeline" min="0" max="100" value="0" oninput="changeProgress()">
     <input type="text" id="search" placeholder="Search for videos">
     <button id="search-button" onclick="query()">Search</button>
-    <!-- <script>
-        document.getElementById('search-button').addEventListener('click', query);
-    </script> -->
     <ul id="videoList"></ul>
 
 </body>

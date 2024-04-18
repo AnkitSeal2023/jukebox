@@ -1,15 +1,10 @@
-let rooms = [];
 console.log("script.js loaded");
-let search;
+let rooms = [];
+let search, mainid, q, roomValue, requestOptions, contentInfo, timeline, time, tag, vidID;
+vidID="M7lc1UVf-VE";
+var player;
 let id = [];
-let id2;
 let title = [];
-let mainid;
-let q;
-let roomValue;
-let requestOptions;
-let contentInfo;
-let seconds;
 socket.on('getrooms', (room) => {
   rooms = room;
   console.log("rooms check event executed . rooms=", rooms); // This will be executed when the server emits the 'roomcheck' event
@@ -91,12 +86,22 @@ function processVideos() {
 }
 
 function playVideo(vid) {
-  const video = document.querySelector('iframe');
+  // const video = document.querySelector('iframe');
   h1 = document.querySelector('h1');
   h1.textContent = vid.title;
   id2 = vid.videoId;
   getSeconds(id2);
-  video.src = `https://www.youtube.com/embed/${id2}?si=JkMawwWwe-8avw1C&autoplay=1`;
+  // video.src = `https://www.youtube.com/embed/${id2}?si=JkMawwWwe-8avw1C&autoplay=1`;
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api";
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  // 3. This function creates an <iframe> (and YouTube player)
+  //    after the API code downloads.
+  console.log("id2=", id2);
+  // onYouTubeIframeAPIReady(id2);
+  loadYouTubePlayerAPI(id2);
 }
 
 async function onload() {
@@ -104,7 +109,6 @@ async function onload() {
   socket.emit('submit', prompt("Enter your name"));
   socket.on('videoLoaded', (videoId) => {
     const video = document.querySelector('iframe');
-    video.src = `https://www.youtube.com/embed/${videoId}?si=JkMawwWwe-8avw1C&autoplay=1`;
   });
 }
 
@@ -117,19 +121,19 @@ async function getSec(id2) {
     method: "GET",
     redirect: "follow"
   };
-  try{
+  try {
     response = await fetch(`https://www.googleapis.com/youtube/v3/videos?key=AIzaSyBhp8ZjlUH43kCd47j9osQj67IYAchSdsI&id=${mainid}&part=contentDetails`, requestOptions);
     if (!response.ok) {
       throw new Error('Network response was not ok');
     }
-    else 
-    {
+    else {
       contentInfo = await response.json();  // store the video details for that id
-      seconds= iso8601DurationToSec(contentInfo.items[0].contentDetails.duration);
-      document.getElementById("timeline").max=seconds;
+      seconds = iso8601DurationToSec(contentInfo.items[0].contentDetails.duration);
+      document.getElementById("timeline").max = seconds;
+      console.log("time:", seconds);
     }
   }
-  catch (error){
+  catch (error) {
     console.error('Fetch error:', error);
   }
 }
@@ -161,4 +165,72 @@ function iso8601DurationToSec(duration) {
     parseFloat(seconds);
 
   return totalSeconds;
+}
+
+// Function to load the YouTube IFrame Player API
+function loadYouTubePlayerAPI(id2) {
+  console.log("youtubeplayerapi executing");
+  onYouTubeIframeAPIReady(id2);
+}
+
+// Function to seek to a specific time in the video
+function seekToTime(time) {
+  console.log("seekToTime function called with seconds:", time);
+  console.log(player);
+  if (player && typeof player.seekTo === 'function') {
+    console.log("Player exists and has seekTo method");
+    player.seekTo(time, true); // Seek to the specified time in seconds
+  } else {
+    console.log("Player is not ready or seekTo method is not available");
+  }
+}
+
+// Function called when the YouTube IFrame Player API is ready
+function onYouTubeIframeAPIReady() {
+  player = new YT.Player('youtubePlayer', {
+    height: '500vh',
+    width: '500vw',
+    videoId: vidID,
+    playerVars: {
+      'playsinline': 1,
+      'autoplay': 1,
+      'controls': 0,
+    },
+    events: {
+      'onReady': onPlayerReady,
+    }
+  });
+  console.log("player=",player);
+  console.log("YT=",YT);
+  console.log("video ID=", id2);
+  console.log("player inside onyoutubeapiframe=", id2);
+}
+// Function called when the YouTube Player is ready
+function onPlayerReady(event) {
+  timeline = document.getElementById("timeline").value;
+  console.log("Player is ready");
+  console.log("player=",player);
+}
+
+// Function to handle seek functionality
+function changeProgress() {
+  timeline = document.getElementById("timeline").value;
+  console.log("timeline executed", timeline);
+  if (!player) {
+    // // Load the YouTube IFrame Player API and then seek to the specified time
+    // loadYouTubePlayerAPI(()=> {
+    // });
+    console.log("player not initialised in changeprogress");
+  } else {
+    // If the player is already initialized, directly seek to the specified time
+    seekToTime(timeline);
+  }
+}
+
+function alertFunc()
+{
+  alert("YT=",YT);
+  setTimeout(() => {
+    console.log("YT=",YT);
+  }, 2000);
 }
