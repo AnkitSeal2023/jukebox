@@ -192,7 +192,7 @@ function onYouTubeIframeAPIReady() {
     playerVars: {
       'playsinline': 1,
       'autoplay': 1,
-      'controls': 1,
+      'controls': 0,
     },
     events: {
       'onReady': onPlayerReady,
