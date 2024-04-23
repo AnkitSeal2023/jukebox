@@ -4,3 +4,10 @@ body{
     margin: 0;
     padding: 0;
 }
+#submit{
+    color: black;
+}
+::placeholder{
+    color: black;
+    font-weight: 700;
+}

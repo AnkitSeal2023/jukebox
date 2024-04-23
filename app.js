@@ -21,17 +21,23 @@ io.on('connection', (socket) => {
     socket.emit("getrooms", rooms);
     socket.on('submit', (name) => {
         roomIds = Array.from(socket.rooms.values());
-        userRoom = roomIds[0]; // Assuming the user is in more than one room
+        userRoom = roomIds[0]; 
         rooms.push(userRoom);
         console.log(`User ${name}:connected to the server`);
         console.log("rooms:", rooms);
     });
     socket.on("joinRoom",(roomValue)=>{
-        socket.join("roomValue");
+        // socket.leave();
+        socket.join(roomValue);
+        socket.emit('executeSubmitFunc');
     });
-    socket.on('loadVideo', (videoId) => {
+    socket.on('videoPlay', (vid) => {
         // Broadcast the video ID to all other clients
-        socket.broadcast.emit('videoLoaded', videoId);
+        console.log("event emitted by:",socket.id);
+        socket.broadcast.emit('videoLoaded', vid);
+    socket.on('seekTime',(timeline)=>{
+        socket.broadcast.emit('seek',timeline);
+    });
     });
 });
 server.listen(3000, () => {

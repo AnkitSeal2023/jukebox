@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,20 +8,33 @@
 </head>
 
 <body>
-    <script src="script.js"></script>
-    <script src="https://www.youtube.com/iframe_api" onload="alertFunc()"></script>
     <script type="module">
         import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
         var socket = io();
     </script>
-    
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous">
+        var socket = io();
+    </script>
+    <script src="script.js"></script>
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous">
+        var socket = io();
+        function enterroom() {  //enter a particular room
+            console.log("executed enterroom function");
+            socket.emit("joinRoom", roomValue);
+        }
+        function getroom(vid)
+        {
+            socket.emit('videoPlay',vid);
+        }
+    </script>
+    <script src="https://www.youtube.com/iframe_api"></script>
     <h1>YouTube API Example</h1>
     <div id="youtubePlayer"></div>
     <input type="range" id="timeline" min="0" max="100" value="0" oninput="changeProgress()">
     <input type="text" id="search" placeholder="Search for videos">
     <button id="search-button" onclick="query()">Search</button>
     <ul id="videoList"></ul>
-
+    <script src="./dist/bundle.js"></script>
 </body>
 
 </html>

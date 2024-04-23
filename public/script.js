@@ -1,3 +1,5 @@
+// const io = require('socket.io-client');
+var socket = io();
 console.log(" loaded script.js");
 let rooms = [];
 let search, mainid, q, roomValue, requestOptions, contentInfo, timeline, time, tag, vidID, timerInterval;
@@ -5,12 +7,8 @@ vidID="M7lc1UVf-VE";
 var player;
 let id = [];
 let title = [];
-socket.on('getrooms', (room) => {
-  rooms = room;
-  console.log("rooms check event executed . rooms=", rooms); // This will be executed when the server emits the 'roomcheck' event
-});
-
 function enterroom() {  //enter a particular room
+  console.log("executed enterroom function");
   socket.emit("joinRoom", roomValue);
 }
 
@@ -86,6 +84,21 @@ function processVideos() {  //filter the required data from the received json ob
 }
 
 function playVideo(vid) {  //executed when one of the button in the list of buttons is clicked
+  socket.emit('videoPlay',vid); //tell other sockets about the new video object
+  h1 = document.querySelector('h1');
+  h1.textContent = vid.title;
+  id2 = vid.videoId;
+  getSeconds(id2); //get no of seconds for the new video
+  var tag = document.createElement('script');
+  tag.src = "https://www.youtube.com/iframe_api"; //load the youtubeiframe api
+  var firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+  player.videoId=id2; //assign the clicked button's video id to player
+  player.loadVideoById(id2); //load the video of the clicked buttons' video id
+}
+
+function playVideo2(vid) {  //executed when one of the button in the list of buttons is clicked
+  // socket.emit('videoPlay',vid);  //tell other sockets about the new video object
   h1 = document.querySelector('h1');
   h1.textContent = vid.title;
   id2 = vid.videoId;
@@ -226,13 +239,17 @@ function changeProgress() {
   } else {
     // If the player is already initialized, directly seek to the specified time
     seekToTime(timeline);
+    socket.emit('seekTime',timeline);
   }
 }
 
-function alertFunc()
-{
-  alert("YT=",YT);
-  setTimeout(() => {
-    console.log("YT=",YT);
-  }, 2000);
-}
+socket.on('getrooms', (room) => {
+  rooms = room;
+  console.log("rooms check event executed . rooms=", rooms); // This will be executed when the server emits the 'roomcheck' event
+});
+socket.on("videoLoaded",(vidObj)=>{
+  console.log("event received by:", socket.id);
+  playVideo2(vidObj);
+});
+socket.on("executeSubmitFunc",()=>submit());
+socket.on('seek',(timeline)=>seekToTime(timeline));
