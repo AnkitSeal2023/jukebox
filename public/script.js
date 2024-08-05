@@ -43,7 +43,7 @@ async function getVideos(q) {
   };
 
   try {
-    response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=AIzaSyBhp8ZjlUH43kCd47j9osQj67IYAchSdsI&q=${q}&type=video&regionCode=IN&part=snippet`, requestOptions);
+    response = await fetch(`https://www.googleapis.com/youtube/v3/search?key=kCd47j9osQj67IYAchSdsI&q=${q}&type=video&regionCode=IN&part=snippet`, requestOptions);
 
     if (!response.ok) {
       throw new Error('Network response was not ok');
